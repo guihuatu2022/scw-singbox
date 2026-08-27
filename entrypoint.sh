@@ -11,9 +11,13 @@ if [ -z "${UUID}" ]; then
 fi
 
 export WS_PATH="${WS_PATH:-/ws}"
-export LOG_LEVEL="${LOG_LEVEL:-warn}"
+export LOG_LEVEL="${LOG_LEVEL:-error}"
 
-echo "Starting sing-box: PORT=${PORT} WS_PATH=${WS_PATH} LOG_LEVEL=${LOG_LEVEL} GOMAXPROCS=${GOMAXPROCS} GOMEMLIMIT=${GOMEMLIMIT}"
+# 尝试调高最大文件描述符数，应对连接数增多。沙箱环境可能不允许调整，
+# 失败也不影响启动（|| true），只是退回平台默认值。
+ulimit -n 65535 2>/dev/null || true
+
+echo "Starting sing-box: PORT=${PORT} WS_PATH=${WS_PATH} LOG_LEVEL=${LOG_LEVEL} GOMAXPROCS=${GOMAXPROCS} GOMEMLIMIT=${GOMEMLIMIT} ulimit-n=$(ulimit -n)"
 
 mkdir -p /etc/sing-box
 
