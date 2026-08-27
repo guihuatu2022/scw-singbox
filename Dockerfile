@@ -21,9 +21,14 @@ COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh /usr/local/bin/sing-box
 
 # Scaleway 会在部署时把 Port 参数通过 PORT 环境变量注入，这里只是本地调试默认值
-# GOMAXPROCS/GOMEMLIMIT 是给 128MB/100mCPU 这种极限资源准备的安全阀，见 README
+# GOMAXPROCS/GOMEMLIMIT/GOGC 是给 128MB/100mCPU 这种极限资源准备的安全阀，见 README：
+# - GOMAXPROCS=1  避免 Go 运行时按宿主机核心数（而非 cgroup 配额）开线程，浪费调度开销
+# - GOMEMLIMIT    堆内存软上限，留出安全余量防止被平台 OOM Kill
+# - GOGC=off      关掉按比例触发 GC 的机制，只依赖 GOMEMLIMIT 兜底——
+#                 CPU 比内存更紧张时，不必要的高频 GC 反而是在浪费本就稀缺的算力
 ENV PORT=8080 \
     GOMAXPROCS=1 \
-    GOMEMLIMIT=100MiB
+    GOMEMLIMIT=90MiB \
+    GOGC=off
 
 ENTRYPOINT ["/entrypoint.sh"]
