@@ -3,6 +3,16 @@
     "level": "@LOG_LEVEL@",
     "timestamp": false
   },
+  "dns": {
+    "servers": [
+      {
+        "tag": "resolver",
+        "address": "1.1.1.1",
+        "strategy": "ipv4_only"
+      }
+    ],
+    "strategy": "ipv4_only"
+  },
   "inbounds": [
     {
       "type": "vless",
@@ -21,13 +31,18 @@
         "path": "@WS_PATH@",
         "max_early_data": 2048,
         "early_data_header_name": "Sec-WebSocket-Protocol"
+      },
+      "multiplex": {
+        "enabled": true,
+        "padding": false
       }
     }
   ],
   "outbounds": [
     {
       "type": "direct",
-      "tag": "direct"
+      "tag": "direct",
+      "domain_strategy": "ipv4_only"
     }
   ]
 }
