@@ -3,7 +3,7 @@
 # ---- 构建阶段：从源码编译，不加任何 -tags，只保留 VLESS + WS 需要的核心功能 ----
 FROM golang:1.24-alpine AS builder
 
-ARG SING_BOX_VERSION=v1.13.12
+ARG SING_BOX_VERSION=v1.8.0
 ENV CGO_ENABLED=0 GOOS=linux GOARCH=amd64
 
 # 不加 -tags：VLESS 协议和 WS 传输都是核心内置功能，不依赖 with_quic/with_gvisor/
